@@ -1,7 +1,13 @@
 class AppDelegate
   def application(application, didFinishLaunchingWithOptions:launchOptions)
-    puts "#{App.name} (#{App.documents_path})"
-    # RssFeed.parse_all
+
+  	application.setStatusBarHidden(true, withAnimation:false)
+
+    @window = UIWindow.alloc.initWithFrame(UIScreen.mainScreen.bounds)
+    tableViewController = TopicTableViewController.alloc.init
+    @window.rootViewController = tableViewController
+    @window.backgroundColor = UIColor.redColor
+    @window.makeKeyAndVisible
     true
   end
 end
