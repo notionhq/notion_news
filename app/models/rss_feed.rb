@@ -2,10 +2,13 @@ class RssFeed
 
   DEFAULT_FEEDS = [
     'http://rss.cnn.com/rss/cnn_us.rss',
-    'http://rss.cnn.com/rss/cnn_world.rss'
+    'http://rss.cnn.com/rss/cnn_world.rss',
+    'http://www.nytimes.com/services/xml/rss/nyt/World.xml',
+    'http://www.nytimes.com/services/xml/rss/nyt/US.xml',
+    'http://rss.nytimes.com/services/xml/rss/nyt/Business.xml'
   ]
 
-  attr_reader :url, :titles
+  attr_reader :url, :items, :feed_parser, :uuid
 
   def self.all
     return @rss_feeds if @rss_feeds
@@ -14,6 +17,7 @@ class RssFeed
   end
 
   def self.parse_all
+    @@results = []
     self.all.each { |feed| feed.parse }
   end
 
@@ -24,35 +28,25 @@ class RssFeed
 
   def initialize(url)
     @url = url
-  end
-
-  def feed_parser
+    @uuid = BubbleWrap.create_uuid
     @feed_parser = BW::RSSParser.new(self.url)
+    @feed_parser.delegate = self
   end
 
   def parse
-    @titles = []
+    @items = []
     self.feed_parser.parse do |item|
-      @titles << item.title
+      @items << item
     end
   end
 
-  def parsed
-    !!@parsed
-  end
-
-  def when_parser_initializes
-    # p "The parser is ready!"
-  end
-
-  def when_parser_parses
-    # p "The parser started parsing the document"
+  def method_missing(*args)
+    puts "MISSING", args.inspect
   end
 
   def when_parser_is_done
-    @parsed = true
-    # p "The parser started parsing the document"
-    # RssFeed.parse_next
+    Topic.add_rss_feed(self)
   end
 
 end
+
