@@ -27,12 +27,23 @@ class TopicTableViewController < UITableViewController
     self
   end
 
+  def viewWillDisappear(animated)
+    App.notification_center.unobserve @reload_observer
+  end
+
+  def viewWillAppear(animated)
+    @reload_observer = App.notification_center.observe Topic::RefreshNotification do |notification|
+      puts "Reloading Table"
+      self.tableView.reloadData
+    end
+  end
+
   def viewDidLoad
     view.dataSource = view.delegate = self
   end
 
   def tableView(tableView, numberOfRowsInSection:section)
-  10
+    Topic.all.count
   end
 
   CELLID = 'CellIdentifier'
@@ -43,7 +54,7 @@ class TopicTableViewController < UITableViewController
       cell
     end
 
-    cell.textLabel.text = 'Hello World'
+    cell.textLabel.text = Topic.all[indexPath.row].title
     cell
   end
 end

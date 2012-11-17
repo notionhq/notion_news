@@ -5,14 +5,18 @@ class RssFeed
     'http://rss.cnn.com/rss/cnn_world.rss',
     'http://www.nytimes.com/services/xml/rss/nyt/World.xml',
     'http://www.nytimes.com/services/xml/rss/nyt/US.xml',
-    'http://rss.nytimes.com/services/xml/rss/nyt/Business.xml'
+    'http://rss.nytimes.com/services/xml/rss/nyt/Business.xml',
+    'http://feeds.bbci.co.uk/news/rss.xml',
+    'http://feeds.bbci.co.uk/news/world/rss.xml',
+    'http://www.pbs.org/newshour/rss/headlines.xml',
+    'http://rss.msnbc.msn.com/id/3032091/device/rss/rss.xml'
   ]
 
   attr_reader :url, :items, :feed_parser, :uuid
 
   def self.all
     return @rss_feeds if @rss_feeds
-    App::Persistence['rss_feeds'] = DEFAULT_FEEDS unless App::Persistence['rss_feeds']
+    App::Persistence['rss_feeds'] = DEFAULT_FEEDS # unless App::Persistence['rss_feeds']
     @rss_feeds = App::Persistence['rss_feeds'].map { |url| self.new(url) }
   end
 
@@ -41,7 +45,7 @@ class RssFeed
   end
 
   def method_missing(*args)
-    puts "MISSING", args.inspect
+    # puts "MISSING", args.inspect
   end
 
   def when_parser_is_done
